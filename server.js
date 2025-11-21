@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
-require('dotenv').config();
+require('dotenv').config({ path: '.env.local' });
 
 const app = express();
 const PORT = 3000;
@@ -11,6 +11,13 @@ app.use(express.static('.')); // Statik dosyaları servis et
 
 const API_KEY = process.env.TMDB_API_KEY;
 const BASE_URL = 'https://api.themoviedb.org/3';
+
+// Debug: API Key kontrol
+console.log('🔑 API Key yüklendi:', API_KEY ? 'EVET ✅' : 'HAYIR ❌');
+if (!API_KEY) {
+    console.error('⚠️  HATA: TMDB_API_KEY .env.local dosyasında bulunamadı!');
+    process.exit(1);
+}
 
 // Proxy endpoint - tüm TMDB isteklerini yönlendir
 app.get('/api/*', async (req, res) => {

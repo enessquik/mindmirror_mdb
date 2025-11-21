@@ -1,6 +1,7 @@
-// TMDB API Configuration
-const API_KEY = 'BURAYA_API_KEY_GİRİN'; // https://www.themoviedb.org/settings/api adresinden API key alın
+// API Configuration - GELİŞTİRME MODU (lokal test)
+// Production'da backend proxy kullanılacak
 const BASE_URL = 'https://api.themoviedb.org/3';
+const API_KEY = 'b7be32426cfcc04c7b0463b60d81ed3f'; // SADECE LOKAL TEST İÇİN!
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 const BACKDROP_URL = 'https://image.tmdb.org/t/p/original';
 
@@ -104,8 +105,8 @@ async function loadMovies() {
         moviesGrid.innerHTML = `
             <div class="loading">
                 <i class="fas fa-exclamation-circle"></i>
-                <p>Filmler yüklenirken bir hata oluştu. Lütfen API key'inizi kontrol edin.</p>
-                <p style="font-size: 14px; margin-top: 10px;">API key'i app.js dosyasındaki API_KEY değişkenine ekleyin.</p>
+                <p>Filmler yüklenirken bir hata oluştu.</p>
+                <p style="font-size: 14px; margin-top: 10px;">Server çalışıyor mu kontrol edin.</p>
             </div>
         `;
     }
@@ -163,7 +164,7 @@ function displayMovies(movies) {
             : null;
         
         return `
-            <div class="movie-card" onclick="showMovieDetails(${movie.id})">
+            <div class="movie-card" onclick="window.location.href='watch.html?id=${movie.id}&type=${currentType}'">
                 ${posterPath 
                     ? `<img src="${posterPath}" alt="${title}">`
                     : `<div class="no-image"><i class="fas fa-film"></i></div>`
@@ -207,6 +208,12 @@ async function showMovieDetails(id) {
         const director = movie.credits?.crew?.find(person => person.job === 'Director');
         const cast = movie.credits?.cast?.slice(0, 5).map(actor => actor.name).join(', ') || 'Bilgi yok';
         
+        // VixSrc embed URL
+        const tmdbId = movie.id;
+        const vixsrcUrl = currentType === 'movie' 
+            ? `https://vidsrc.to/embed/movie/${tmdbId}`
+            : `https://vidsrc.to/embed/tv/${tmdbId}`;
+        
         modalBody.innerHTML = `
             ${backdropPath ? `<img src="${backdropPath}" alt="${title}" class="modal-backdrop">` : ''}
             <div class="modal-details">
@@ -237,6 +244,23 @@ async function showMovieDetails(id) {
                 </div>
                 
                 ${genres ? `<div class="genres">${genres}</div>` : ''}
+                
+                <!-- VixSrc Player -->
+                <div class="player-container" style="margin: 30px 0;">
+                    <button onclick="loadPlayer()" class="play-button" id="playButton">
+                        <i class="fas fa-play"></i> İzle
+                    </button>
+                    <div id="playerFrame" style="display: none;">
+                        <iframe 
+                            src="${vixsrcUrl}" 
+                            width="100%" 
+                            height="500" 
+                            frameborder="0" 
+                            allowfullscreen
+                            style="border-radius: 15px;">
+                        </iframe>
+                    </div>
+                </div>
                 
                 ${movie.overview ? `
                 <div>
@@ -295,4 +319,13 @@ function showLoading() {
             <p>Yükleniyor...</p>
         </div>
     `;
+}
+
+// Load Player
+function loadPlayer() {
+    const playButton = document.getElementById('playButton');
+    const playerFrame = document.getElementById('playerFrame');
+    
+    playButton.style.display = 'none';
+    playerFrame.style.display = 'block';
 }
