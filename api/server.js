@@ -14,20 +14,17 @@ module.exports = async (req, res) => {
     }
     
     try {
-        // URL'den path'i al - /api/movie/popular -> movie/popular
-        const path = req.url.replace('/api/', '');
+        // URL'den path ve query parametrelerini al
+        const urlParts = req.url.split('?');
+        const path = urlParts[0].replace('/api/', '');
+        const queryString = urlParts[1] || '';
         
-        // Query parametrelerini kopyala ve API key ekle
-        const url = new URL(path, BASE_URL);
-        Object.keys(req.query || {}).forEach(key => {
-            url.searchParams.append(key, req.query[key]);
-        });
-        url.searchParams.append('api_key', API_KEY);
-        url.searchParams.append('language', 'tr-TR');
+        // TMDB URL'ini oluştur
+        const tmdbUrl = `${BASE_URL}/${path}?${queryString}&api_key=${API_KEY}&language=tr-TR`;
         
-        console.log('Fetching:', url.toString());
+        console.log('Fetching:', tmdbUrl);
         
-        const response = await fetch(url.toString());
+        const response = await fetch(tmdbUrl);
         const data = await response.json();
         
         return res.status(200).json(data);
