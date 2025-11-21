@@ -1,6 +1,8 @@
-// API Configuration - Direkt TMDB API kullanıyoruz
-const BASE_URL = 'https://api.themoviedb.org/3';
-const API_KEY = 'b7be32426cfcc04c7b0463b60d81ed3f';
+// API Configuration
+// Production'da backend proxy, development'da direkt API
+const isProduction = window.location.hostname !== 'localhost' && !window.location.protocol.includes('file');
+const BASE_URL = isProduction ? '/api' : 'https://api.themoviedb.org/3';
+const API_KEY = isProduction ? '' : 'b7be32426cfcc04c7b0463b60d81ed3f'; // Production'da backend'de
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 const BACKDROP_URL = 'https://image.tmdb.org/t/p/original';
 
@@ -92,7 +94,9 @@ async function loadMovies() {
     showLoading();
     
     try {
-        const url = `${BASE_URL}/${currentType}/${currentCategory}?api_key=${API_KEY}&language=tr-TR&page=${currentPage}`;
+        const url = isProduction 
+            ? `${BASE_URL}/${currentType}/${currentCategory}?page=${currentPage}`
+            : `${BASE_URL}/${currentType}/${currentCategory}?api_key=${API_KEY}&language=tr-TR&page=${currentPage}`;
         const response = await fetch(url);
         const data = await response.json();
         
@@ -124,7 +128,9 @@ async function searchMovies() {
     currentPage = 1;
     
     try {
-        const url = `${BASE_URL}/search/${currentType}?api_key=${API_KEY}&language=tr-TR&query=${encodeURIComponent(query)}&page=${currentPage}`;
+        const url = isProduction
+            ? `${BASE_URL}/search/${currentType}?query=${encodeURIComponent(query)}&page=${currentPage}`
+            : `${BASE_URL}/search/${currentType}?api_key=${API_KEY}&language=tr-TR&query=${encodeURIComponent(query)}&page=${currentPage}`;
         const response = await fetch(url);
         const data = await response.json();
         
