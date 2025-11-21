@@ -128,13 +128,19 @@ async function searchMovies() {
     currentPage = 1;
     
     try {
+        // Multi-search kullan - hem film hem dizi ara
         const url = isProduction
-            ? `${BASE_URL}/search/${currentType}?query=${encodeURIComponent(query)}&page=${currentPage}`
-            : `${BASE_URL}/search/${currentType}?api_key=${API_KEY}&language=tr-TR&query=${encodeURIComponent(query)}&page=${currentPage}`;
+            ? `${BASE_URL}/search/multi?query=${encodeURIComponent(query)}&page=${currentPage}`
+            : `${BASE_URL}/search/multi?api_key=${API_KEY}&language=tr-TR&query=${encodeURIComponent(query)}&page=${currentPage}`;
         const response = await fetch(url);
         const data = await response.json();
         
-        displayMovies(data.results);
+        // Sadece film ve TV sonuçlarını filtrele
+        const filtered = data.results.filter(item => 
+            item.media_type === 'movie' || item.media_type === 'tv'
+        );
+        
+        displayMovies(filtered);
         totalPages = data.total_pages;
         updatePagination();
     } catch (error) {
@@ -168,8 +174,11 @@ function displayMovies(movies) {
             ? `${IMG_URL}${movie.poster_path}`
             : null;
         
+        // media_type varsa onu kullan (multi-search için), yoksa currentType kullan
+        const itemType = movie.media_type || currentType;
+        
         return `
-            <div class="movie-card" onclick="window.location.href='watch.html?id=${movie.id}&type=${currentType}'">
+            <div class="movie-card" onclick="window.location.href='watch.html?id=${movie.id}&type=${itemType}'">
                 ${posterPath 
                     ? `<img src="${posterPath}" alt="${title}">`
                     : `<div class="no-image"><i class="fas fa-film"></i></div>`
@@ -177,6 +186,7 @@ function displayMovies(movies) {
                 <div class="movie-info">
                     <div class="movie-header">
                         <h3 class="movie-title">${title}</h3>
+                        ${movie.media_type ? `<span class="type-badge">${movie.media_type === 'movie' ? 'Film' : 'Dizi'}</span>` : ''}
                     </div>
                     <div class="rating">
                         <i class="fas fa-star"></i>
