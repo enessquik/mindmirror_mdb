@@ -4,9 +4,8 @@
   "description": "Film ve dizi keşif platformu - TMDB API ile",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
-    "vercel-build": "echo 'Build complete'"
+    "start": "node api/server.js",
+    "dev": "nodemon api/server.js"
   },
   "keywords": ["tmdb", "movies", "tv", "api", "vercel"],
   "author": "",
