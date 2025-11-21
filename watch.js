@@ -1,7 +1,6 @@
-// API Configuration
-const isProduction = window.location.hostname !== 'localhost' && !window.location.protocol.includes('file');
-const BASE_URL = isProduction ? '/api' : 'https://api.themoviedb.org/3';
-const API_KEY = isProduction ? '' : 'b7be32426cfcc04c7b0463b60d81ed3f';
+// API Configuration - Direkt TMDB API
+const BASE_URL = 'https://api.themoviedb.org/3';
+const API_KEY = 'b7be32426cfcc04c7b0463b60d81ed3f';
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 const BACKDROP_URL = 'https://image.tmdb.org/t/p/original';
 
@@ -39,9 +38,7 @@ if (movieId) {
 // Load Movie Details
 async function loadMovieDetails() {
     try {
-        const url = isProduction
-            ? `${BASE_URL}/${mediaType}/${movieId}?append_to_response=credits,videos`
-            : `${BASE_URL}/${mediaType}/${movieId}?api_key=${API_KEY}&language=tr-TR&append_to_response=credits,videos`;
+        const url = `${BASE_URL}/${mediaType}/${movieId}?api_key=${API_KEY}&language=tr-TR&append_to_response=credits,videos`;
         const response = await fetch(url);
         const movie = await response.json();
         
@@ -170,9 +167,7 @@ async function loadEpisodes() {
     episodesGrid.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin" style="font-size: 24px; color: var(--accent-color);"></i></div>';
     
     try {
-        const url = isProduction
-            ? `${BASE_URL}/tv/${movieId}/season/${currentSeason}`
-            : `${BASE_URL}/tv/${movieId}/season/${currentSeason}?api_key=${API_KEY}&language=tr-TR`;
+        const url = `${BASE_URL}/tv/${movieId}/season/${currentSeason}?api_key=${API_KEY}&language=tr-TR`;
         console.log('Bölümler yükleniyor:', url);
         const response = await fetch(url);
         const seasonData = await response.json();
