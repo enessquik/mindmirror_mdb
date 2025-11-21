@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindMirror - Film & Dizi Kütüphanesi</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <i class="fas fa-film"></i>
+                    <h1>MindMirror</h1>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Film veya dizi ara...">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="nav-links">
+                    <a href="#" class="nav-link active" data-category="popular">Popüler</a>
+                    <a href="#" class="nav-link" data-category="top_rated">En İyi</a>
+                    <a href="#" class="nav-link" data-category="upcoming">Yakında</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <div class="hero-content">
+                <h2 id="heroTitle">Filmler ve Diziler</h2>
+                <p id="heroDesc">En son çıkan filmler ve popüler dizileri keşfedin</p>
+            </div>
+        </section>
+
+        <section class="filters">
+            <button class="filter-btn active" data-type="movie">
+                <i class="fas fa-film"></i> Filmler
+            </button>
+            <button class="filter-btn" data-type="tv">
+                <i class="fas fa-tv"></i> Diziler
+            </button>
+        </section>
+
+        <section class="movies-grid" id="moviesGrid">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Yükleniyor...</p>
+            </div>
+        </section>
+
+        <div class="pagination" id="pagination">
+            <button id="prevBtn" class="page-btn"><i class="fas fa-chevron-left"></i> Önceki</button>
+            <span id="pageInfo" class="page-info">Sayfa 1</span>
+            <button id="nextBtn" class="page-btn">Sonraki <i class="fas fa-chevron-right"></i></button>
+        </div>
+    </main>
+
+    <!-- Film Detay Modal -->
+    <div class="modal" id="movieModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-body" id="modalBody">
+                <!-- Film detayları buraya yüklenecek -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MindMirror - Tüm hakları saklıdır</p>
+            <p class="tmdb-credit">
+                <img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_short-8e7b30f73a4020692ccca9c88bafe5dcb6f8a62a4c6bc55cd9ba82bb2cd95f6c.svg" alt="TMDB" style="height: 20px; vertical-align: middle;">
+                Bu ürün TMDB API'sini kullanmaktadır ancak TMDB tarafından onaylanmamış veya sertifikalandırılmamıştır.
+            </p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
