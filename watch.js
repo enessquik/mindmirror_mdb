@@ -2,8 +2,14 @@
 const isProduction = window.location.hostname !== 'localhost' && !window.location.protocol.includes('file');
 const BASE_URL = isProduction ? '/api' : 'https://api.themoviedb.org/3';
 const API_KEY = isProduction ? '' : 'b7be32426cfcc04c7b0463b60d81ed3f';
-const IMG_URL = 'https://image.tmdb.org/t/p/w500';
-const BACKDROP_URL = 'https://image.tmdb.org/t/p/original';
+// Dinamik image config
+let IMAGE_BASE = 'https://image.tmdb.org/t/p/';
+let POSTER_SIZE = 'w500';
+let STILL_SIZE = 'w300';
+let BACKDROP_SIZE = 'original';
+const IMG_URL = () => `${IMAGE_BASE}${POSTER_SIZE}`;
+const STILL_URL = () => `${IMAGE_BASE}${STILL_SIZE}`;
+const BACKDROP_URL = () => `${IMAGE_BASE}${BACKDROP_SIZE}`;
 
 // Get URL parameters
 const urlParams = new URLSearchParams(window.location.search);
@@ -31,9 +37,40 @@ const episodesGrid = document.getElementById('episodesGrid');
 
 // Initialize
 if (movieId) {
-    loadMovieDetails();
+    init();
 } else {
     window.location.href = 'index.html';
+}
+
+async function init() {
+    await loadImageConfig();
+    loadMovieDetails();
+}
+
+async function loadImageConfig() {
+    try {
+        const url = isProduction
+            ? `${BASE_URL}/configuration`
+            : `${BASE_URL}/configuration?api_key=${API_KEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.images && data.images.secure_base_url) {
+            IMAGE_BASE = data.images.secure_base_url;
+            if (data.images.poster_sizes) {
+                if (data.images.poster_sizes.includes('w500')) POSTER_SIZE = 'w500';
+                else POSTER_SIZE = data.images.poster_sizes[Math.min(2, data.images.poster_sizes.length - 1)];
+            }
+            if (data.images.still_sizes) {
+                STILL_SIZE = data.images.still_sizes.includes('w300') ? 'w300' : data.images.still_sizes[0];
+            }
+            if (data.images.backdrop_sizes) {
+                BACKDROP_SIZE = data.images.backdrop_sizes.includes('original') ? 'original' : data.images.backdrop_sizes[data.images.backdrop_sizes.length - 1];
+            }
+            console.log('Watch image config:', IMAGE_BASE, POSTER_SIZE, STILL_SIZE, BACKDROP_SIZE);
+        }
+    } catch (e) {
+        console.warn('Image config alınamadı (watch.js), fallback kullanılıyor:', e.message);
+    }
 }
 
 // Load Movie Details
@@ -207,7 +244,7 @@ function displayEpisodes(episodes) {
                     ${ep.air_date ? `<span class="episode-date"><i class="fas fa-calendar"></i> ${new Date(ep.air_date).toLocaleDateString('tr-TR')}</span>` : ''}
                     ${ep.runtime ? `<span class="episode-runtime"><i class="fas fa-clock"></i> ${ep.runtime} dk</span>` : ''}
                 </div>
-                ${ep.still_path ? `<img src="${IMG_URL}${ep.still_path}" alt="${ep.name}">` : '<div class="episode-placeholder"><i class="fas fa-tv"></i></div>'}
+                ${ep.still_path ? `<img src="${STILL_URL()}${ep.still_path}" alt="${ep.name}" onerror="this.onerror=null;this.replaceWith('<div class=\'episode-placeholder\'><i class=\'fas fa-tv\'></i></div>')">` : '<div class="episode-placeholder"><i class="fas fa-tv"></i></div>'}
             </div>
         `;
     }).join('');

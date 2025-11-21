@@ -3,8 +3,12 @@
 const isProduction = window.location.hostname !== 'localhost' && !window.location.protocol.includes('file');
 const BASE_URL = isProduction ? '/api' : 'https://api.themoviedb.org/3';
 const API_KEY = isProduction ? '' : 'b7be32426cfcc04c7b0463b60d81ed3f'; // Production'da backend'de
-const IMG_URL = 'https://image.tmdb.org/t/p/w500';
-const BACKDROP_URL = 'https://image.tmdb.org/t/p/original';
+// Image config (dinamik)
+let IMAGE_BASE = 'https://image.tmdb.org/t/p/'; // fallback
+let POSTER_SIZE = 'w500';
+let BACKDROP_SIZE = 'original';
+const IMG_URL = () => `${IMAGE_BASE}${POSTER_SIZE}`; // function olarak kullan
+const BACKDROP_URL = () => `${IMAGE_BASE}${BACKDROP_SIZE}`;
 
 // State
 let currentPage = 1;
@@ -24,10 +28,36 @@ const modalBody = document.getElementById('modalBody');
 const closeModal = document.querySelector('.close');
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadImageConfig();
     loadMovies();
     setupEventListeners();
 });
+
+// TMDB configuration endpoint'inden image base bilgisi çek
+async function loadImageConfig() {
+    try {
+        const url = isProduction
+            ? `${BASE_URL}/configuration`
+            : `${BASE_URL}/configuration?api_key=${API_KEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.images && data.images.secure_base_url) {
+            IMAGE_BASE = data.images.secure_base_url;
+            // Tercihen en uygun boyutları seç
+            if (data.images.poster_sizes) {
+                POSTER_SIZE = data.images.poster_sizes.includes('w342') ? 'w342' : data.images.poster_sizes[0];
+                if (data.images.poster_sizes.includes('w500')) POSTER_SIZE = 'w500';
+            }
+            if (data.images.backdrop_sizes) {
+                BACKDROP_SIZE = data.images.backdrop_sizes.includes('original') ? 'original' : data.images.backdrop_sizes[data.images.backdrop_sizes.length - 1];
+            }
+            console.log('Image config yüklendi:', IMAGE_BASE, POSTER_SIZE, BACKDROP_SIZE);
+        }
+    } catch (e) {
+        console.warn('Image config alınamadı, fallback kullanılıyor:', e.message);
+    }
+}
 
 // Event Listeners
 function setupEventListeners() {
@@ -171,7 +201,7 @@ function displayMovies(movies) {
         const date = movie.release_date || movie.first_air_date;
         const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A';
         const posterPath = movie.poster_path 
-            ? `${IMG_URL}${movie.poster_path}`
+            ? `${IMG_URL()}${movie.poster_path}`
             : null;
         
         // media_type varsa onu kullan (multi-search için), yoksa currentType kullan
@@ -180,7 +210,7 @@ function displayMovies(movies) {
         return `
             <div class="movie-card" onclick="window.location.href='watch.html?id=${movie.id}&type=${itemType}'">
                 ${posterPath 
-                    ? `<img src="${posterPath}" alt="${title}">`
+                    ? `<img src="${posterPath}" alt="${title}" onerror="this.onerror=null;this.replaceWith('<div class=\'no-image\'><i class=\'fas fa-film\'></i></div>')">`
                     : `<div class="no-image"><i class="fas fa-film"></i></div>`
                 }
                 <div class="movie-info">
@@ -215,8 +245,8 @@ async function showMovieDetails(id) {
         const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A';
         const runtime = movie.runtime || movie.episode_run_time?.[0];
         const backdropPath = movie.backdrop_path 
-            ? `${BACKDROP_URL}${movie.backdrop_path}`
-            : (movie.poster_path ? `${IMG_URL}${movie.poster_path}` : null);
+            ? `${BACKDROP_URL()}${movie.backdrop_path}`
+            : (movie.poster_path ? `${IMG_URL()}${movie.poster_path}` : null);
         
         const genres = movie.genres?.map(g => `<span class="genre-tag">${g.name}</span>`).join('') || '';
         
