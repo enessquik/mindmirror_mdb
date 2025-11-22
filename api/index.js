@@ -19,36 +19,7 @@ module.exports = async (req, res) => {
         const path = urlParts[0].replace('/api/', '');
         const queryString = urlParts[1] || '';
         
-        // Player proxy - VixSrc
-        if (path.startsWith('player/')) {
-            const playerPath = path.replace('player/', '');
-            
-            // VixSrc URL'ini oluştur
-            const playerUrl = `https://vidsrc.to/embed/${playerPath}`;
-            
-            console.log('Proxying VixSrc:', playerUrl);
-            
-            try {
-                const response = await fetch(playerUrl, {
-                    headers: {
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                        'Referer': 'https://vidsrc.to/',
-                        'Origin': 'https://vidsrc.to'
-                    }
-                });
-                let html = await response.text();
-                
-                res.setHeader('Content-Type', 'text/html; charset=utf-8');
-                res.setHeader('Access-Control-Allow-Origin', '*');
-                
-                return res.status(200).send(html);
-            } catch (error) {
-                console.error('Player proxy error:', error);
-                return res.status(500).send('<html><body style="color:white;background:#1a1a1a;">Player yüklenemedi</body></html>');
-            }
-        }
-        
-        // TMDB API proxy
+        // TMDB API proxy - path /api/tmdb/ şeklinde gelir
         if (path.startsWith('tmdb/')) {
             const tmdbPath = path.replace('tmdb/', '');
             const tmdbUrl = `${BASE_URL}/${tmdbPath}?${queryString}&api_key=${API_KEY}&language=tr-TR`;
@@ -61,7 +32,7 @@ module.exports = async (req, res) => {
             return res.status(200).json(data);
         }
         
-        // Fallback: eğer tmdb/ prefix yoksa direkt path'i TMDB'ye gönder
+        // Fallback: eğer tmdb/ prefix yoksa direkt path'i TMDB'ye gönder (eskiyle uyumluluk)
         const tmdbUrl = `${BASE_URL}/${path}?${queryString}&api_key=${API_KEY}&language=tr-TR`;
         
         console.log('Fetching TMDB (fallback):', tmdbUrl);

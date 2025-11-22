@@ -101,17 +101,13 @@ function displayMovieDetails(movie) {
     const runtime = movie.runtime || movie.episode_run_time?.[0];
     const year = date ? new Date(date).getFullYear() : 'Bilinmiyor';
     
-    // Set player iframe - proxy üzerinden VixSrc
+    // Set player iframe - direkt VixSrc kullan
     let playerUrl;
     if (mediaType === 'movie') {
-        playerUrl = isProduction
-            ? `/api/player/movie/${movieId}`
-            : `https://vixsrc.to/embed/movie/${movieId}`;
+        playerUrl = `https://vidsrc.to/embed/movie/${movieId}`;
     } else {
         // For TV shows, start with Season 1 Episode 1
-        playerUrl = isProduction
-            ? `/api/player/tv/${movieId}/${currentSeason}/${currentEpisode}`
-            : `https://vixsrc.to/embed/tv/${movieId}/${currentSeason}/${currentEpisode}`;
+        playerUrl = `https://vidsrc.to/embed/tv/${movieId}/${currentSeason}/${currentEpisode}`;
         totalSeasons = movie.number_of_seasons || 1;
         
         // Show episode selector for TV shows
@@ -257,9 +253,7 @@ function displayEpisodes(episodes) {
 // Play Episode
 function playEpisode(episodeNumber) {
     currentEpisode = episodeNumber;
-    const playerUrl = isProduction
-        ? `/api/player/tv/${movieId}/${currentSeason}/${episodeNumber}`
-        : `https://vixsrc.to/embed/tv/${movieId}/${currentSeason}/${episodeNumber}`;
+    const playerUrl = `https://vidsrc.to/embed/tv/${movieId}/${currentSeason}/${episodeNumber}`;
     videoPlayer.src = playerUrl;
     
     // Update active state
