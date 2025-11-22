@@ -104,10 +104,10 @@ function displayMovieDetails(movie) {
     // Set player iframe - direkt VixSrc kullan
     let playerUrl;
     if (mediaType === 'movie') {
-        playerUrl = `https://vidsrc.to/embed/movie/${movieId}`;
+        playerUrl = `https://vixsrc.to/embed/movie/${movieId}`;
     } else {
         // For TV shows, start with Season 1 Episode 1
-        playerUrl = `https://vidsrc.to/embed/tv/${movieId}/${currentSeason}/${currentEpisode}`;
+        playerUrl = `https://vixsrc.to/embed/tv/${movieId}/${currentSeason}/${currentEpisode}`;
         totalSeasons = movie.number_of_seasons || 1;
         
         // Show episode selector for TV shows
@@ -253,7 +253,7 @@ function displayEpisodes(episodes) {
 // Play Episode
 function playEpisode(episodeNumber) {
     currentEpisode = episodeNumber;
-    const playerUrl = `https://vidsrc.to/embed/tv/${movieId}/${currentSeason}/${episodeNumber}`;
+    const playerUrl = `https://vixsrc.to/embed/tv/${movieId}/${currentSeason}/${episodeNumber}`;
     videoPlayer.src = playerUrl;
     
     // Update active state
