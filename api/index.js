@@ -34,9 +34,22 @@ module.exports = async (req, res) => {
         }
         
         // TMDB API proxy
+        if (path.startsWith('tmdb/')) {
+            const tmdbPath = path.replace('tmdb/', '');
+            const tmdbUrl = `${BASE_URL}/${tmdbPath}?${queryString}&api_key=${API_KEY}&language=tr-TR`;
+            
+            console.log('Proxying TMDB:', tmdbUrl);
+            
+            const response = await fetch(tmdbUrl);
+            const data = await response.json();
+            
+            return res.status(200).json(data);
+        }
+        
+        // Fallback: eğer tmdb/ prefix yoksa direkt path'i TMDB'ye gönder
         const tmdbUrl = `${BASE_URL}/${path}?${queryString}&api_key=${API_KEY}&language=tr-TR`;
         
-        console.log('Fetching TMDB:', tmdbUrl);
+        console.log('Fetching TMDB (fallback):', tmdbUrl);
         
         const response = await fetch(tmdbUrl);
         const data = await response.json();

@@ -1,7 +1,7 @@
 // API Configuration
 // Production'da backend proxy, development'da direkt API
 const isProduction = window.location.hostname !== 'localhost' && !window.location.protocol.includes('file');
-const BASE_URL = isProduction ? '/api' : 'https://api.themoviedb.org/3';
+const BASE_URL = isProduction ? '/api/tmdb' : 'https://api.themoviedb.org/3';
 const API_KEY = isProduction ? '' : 'b7be32426cfcc04c7b0463b60d81ed3f'; // Production'da backend'de
 // Image config (dinamik)
 let IMAGE_BASE = 'https://image.tmdb.org/t/p/'; // fallback
