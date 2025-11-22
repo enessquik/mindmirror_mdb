@@ -19,36 +19,27 @@ module.exports = async (req, res) => {
         const path = urlParts[0].replace('/api/', '');
         const queryString = urlParts[1] || '';
         
-        // Player proxy - Warezcdn
+        // Player proxy - VixSrc
         if (path.startsWith('player/')) {
             const playerPath = path.replace('player/', '');
             
-            // Warezcdn URL'ini oluştur
-            let playerUrl;
-            if (playerPath.startsWith('movie/')) {
-                const movieId = playerPath.replace('movie/', '');
-                playerUrl = `https://warezcdn.com/embed-movie.php?id=${movieId}`;
-            } else if (playerPath.startsWith('tv/')) {
-                const tvPath = playerPath.replace('tv/', '');
-                playerUrl = `https://warezcdn.com/embed-tv.php?id=${tvPath}`;
-            }
+            // VixSrc URL'ini oluştur
+            const playerUrl = `https://vidsrc.to/embed/${playerPath}`;
             
-            console.log('Proxying player:', playerUrl);
+            console.log('Proxying VixSrc:', playerUrl);
             
             try {
                 const response = await fetch(playerUrl, {
                     headers: {
                         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                        'Referer': 'https://mindmirror.dev/',
-                        'Origin': 'https://mindmirror.dev'
+                        'Referer': 'https://vidsrc.to/',
+                        'Origin': 'https://vidsrc.to'
                     }
                 });
                 let html = await response.text();
                 
-                // X-Frame-Options header'ını kaldır (response'ü modifiye edemediğimiz için, HTML'i modifiye edelim)
                 res.setHeader('Content-Type', 'text/html; charset=utf-8');
                 res.setHeader('Access-Control-Allow-Origin', '*');
-                res.setHeader('X-Frame-Options', 'ALLOWALL');
                 
                 return res.status(200).send(html);
             } catch (error) {
