@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hakkımda | MindMirror</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .about-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .about-header h1 {
+            font-size: 48px;
+            background: linear-gradient(45deg, var(--accent-color), #ff6b6b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .about-header p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .social-links a {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 2px solid var(--border-color);
+        }
+
+        .social-links a:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        .about-section {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+        }
+
+        .about-section h2 {
+            color: var(--accent-color);
+            margin-bottom: 25px;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            background: var(--bg-secondary);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .tech-tag {
+            background: var(--bg-secondary);
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: center;
+            color: var(--accent-color);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .tech-tag:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-bottom: 40px;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .about-header h1 {
+                font-size: 36px;
+            }
+
+            .about-section {
+                padding: 25px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+                <h1>MindMirror</h1>
+            </div>
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <a href="index.html" style="color: var(--text-primary); text-decoration: none;">Filmler</a>
+                <a href="about.html" style="color: var(--accent-color); text-decoration: none;">Hakkımda</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container about-container">
+        <a href="index.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> Ana Sayfaya Dön
+        </a>
+
+        <div class="about-header">
+            <h1>Merhaba! 👋</h1>
+            <p>
+                Ben Enes, a.k.a. eness, enessquik. Android geliştirme, Web, Yapay Zeka ve reverse engineering projelerinde çalışıyorum. 
+                Kodlama dışında zamanımda online judge'larda sorunlara çözümler sunuyorum. 
+                Aşk büyüsü yapmamı sorun çıkarmayın, büyüm sadece makinelerde çalışır! 😄
+            </p>
+            <div class="social-links">
+                <a href="https://github.com/enessquik" target="_blank" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://t.me/enessquik" target="_blank" title="Telegram">
+                    <i class="fab fa-telegram"></i>
+                </a>
+                <a href="https://instagram.com/enesspecter" target="_blank" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="mailto:enesspecter@icloud.com" title="Email">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- İstatistikler -->
+        <div class="about-section">
+            <h2><i class="fas fa-chart-bar"></i> İstatistikler</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">700+</div>
+                    <div class="stat-label">GitHub Stars</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">4.1K</div>
+                    <div class="stat-label">Contribution</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">12+</div>
+                    <div class="stat-label">Repository</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Aktif Topluluk</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teknolojiler -->
+        <div class="about-section">
+            <h2><i class="fas fa-code"></i> Teknolojiler & Araçlar</h2>
+            <div class="tech-grid">
+                <div class="tech-tag">Java & Kotlin</div>
+                <div class="tech-tag">Native Android</div>
+                <div class="tech-tag">React</div>
+                <div class="tech-tag">React Native</div>
+                <div class="tech-tag">Flutter</div>
+                <div class="tech-tag">Compose</div>
+                <div class="tech-tag">ExpressJS</div>
+                <div class="tech-tag">ElectronJS</div>
+                <div class="tech-tag">Node.js</div>
+                <div class="tech-tag">Firebase</div>
+                <div class="tech-tag">PostgreSQL</div>
+                <div class="tech-tag">AI/ML</div>
+            </div>
+        </div>
+
+        <!-- Bağlantılar -->
+        <div class="about-section">
+            <h2><i class="fas fa-link"></i> Bağlantılar</h2>
+            <div style="display: grid; gap: 15px;">
+                <a href="https://eness.me/" target="_blank" style="color: var(--accent-color); text-decoration: none; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-globe"></i> eness.me - Portfolio & Blog
+                </a>
+                <a href="https://eness.me/projects" target="_blank" style="color: var(--accent-color); text-decoration: none; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-folder"></i> Projelerim
+                </a>
+                <a href="https://eness.me/articles" target="_blank" style="color: var(--accent-color); text-decoration: none; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-newspaper"></i> Makalelerim
+                </a>
+                <a href="https://github.com/sponsors/enessquik" target="_blank" style="color: var(--accent-color); text-decoration: none; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-heart"></i> Beni Destekle
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 40px 20px; color: var(--text-secondary); border-top: 1px solid var(--border-color); margin-top: 80px;">
+        <p>© 2025 MindMirror - Yapan: <a href="https://eness.me/" target="_blank" style="color: var(--accent-color);">Enes (enessquik)</a></p>
+    </footer>
+</body>
+</html>
