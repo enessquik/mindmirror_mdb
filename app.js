@@ -253,11 +253,11 @@ async function showMovieDetails(id) {
         const director = movie.credits?.crew?.find(person => person.job === 'Director');
         const cast = movie.credits?.cast?.slice(0, 5).map(actor => actor.name).join(', ') || 'Bilgi yok';
         
-        // VixSrc embed URL
+        // vidsrc-embed.ru embed URL (TMDB ile)
         const tmdbId = movie.id;
-        const vixsrcUrl = currentType === 'movie' 
-            ? `https://vidsrc.to/embed/movie/${tmdbId}`
-            : `https://vidsrc.to/embed/tv/${tmdbId}`;
+        const vidsrcUrl = currentType === 'movie' 
+            ? `https://vidsrc-embed.ru/embed/movie?tmdb=${tmdbId}`
+            : `https://vidsrc-embed.ru/embed/tv?tmdb=${tmdbId}`;
         
         modalBody.innerHTML = `
             ${backdropPath ? `<img src="${backdropPath}" alt="${title}" class="modal-backdrop">` : ''}
@@ -297,7 +297,7 @@ async function showMovieDetails(id) {
                     </button>
                     <div id="playerFrame" style="display: none;">
                         <iframe 
-                            src="${vixsrcUrl}" 
+                            src="${vidsrcUrl}" 
                             width="100%" 
                             height="500" 
                             frameborder="0" 

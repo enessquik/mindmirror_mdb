@@ -101,13 +101,13 @@ function displayMovieDetails(movie) {
     const runtime = movie.runtime || movie.episode_run_time?.[0];
     const year = date ? new Date(date).getFullYear() : 'Bilinmiyor';
     
-    // Set player iframe - direkt VixSrc kullan
+    // Set player iframe - vidsrc-embed.ru kullan (TMDB ile)
     let playerUrl;
     if (mediaType === 'movie') {
-        playerUrl = `https://vixsrc.to/embed/movie/${movieId}`;
+        playerUrl = `https://vidsrc-embed.ru/embed/movie?tmdb=${movieId}`;
     } else {
         // For TV shows, start with Season 1 Episode 1
-        playerUrl = `https://vixsrc.to/embed/tv/${movieId}/${currentSeason}/${currentEpisode}`;
+        playerUrl = `https://vidsrc-embed.ru/embed/tv?tmdb=${movieId}&season=${currentSeason}&episode=${currentEpisode}`;
         totalSeasons = movie.number_of_seasons || 1;
         
         // Show episode selector for TV shows
@@ -253,7 +253,7 @@ function displayEpisodes(episodes) {
 // Play Episode
 function playEpisode(episodeNumber) {
     currentEpisode = episodeNumber;
-    const playerUrl = `https://vixsrc.to/embed/tv/${movieId}/${currentSeason}/${episodeNumber}`;
+    const playerUrl = `https://vidsrc-embed.ru/embed/tv?tmdb=${movieId}&season=${currentSeason}&episode=${episodeNumber}`;
     videoPlayer.src = playerUrl;
     
     // Update active state
