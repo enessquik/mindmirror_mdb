@@ -19,10 +19,24 @@ module.exports = async (req, res) => {
         const path = urlParts[0].replace('/api/', '');
         const queryString = urlParts[1] || '';
         
-        // TMDB URL'ini oluştur
+        // Player proxy - VixSrc yükle
+        if (path.startsWith('player/')) {
+            const playerPath = path.replace('player/', '');
+            const playerUrl = `https://vidsrc.to/embed/${playerPath}`;
+            console.log('Proxying player:', playerUrl);
+            
+            const response = await fetch(playerUrl);
+            const html = await response.text();
+            
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            res.setHeader('X-Frame-Options', 'ALLOW');
+            return res.status(200).send(html);
+        }
+        
+        // TMDB API proxy
         const tmdbUrl = `${BASE_URL}/${path}?${queryString}&api_key=${API_KEY}&language=tr-TR`;
         
-        console.log('Fetching:', tmdbUrl);
+        console.log('Fetching TMDB:', tmdbUrl);
         
         const response = await fetch(tmdbUrl);
         const data = await response.json();
