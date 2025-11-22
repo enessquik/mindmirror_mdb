@@ -101,13 +101,15 @@ function displayMovieDetails(movie) {
     const runtime = movie.runtime || movie.episode_run_time?.[0];
     const year = date ? new Date(date).getFullYear() : 'Bilinmiyor';
     
-    // Set VixSrc iframe - direkt URL kullan (Cloudflare JS challenge için)
-    let vixsrcUrl;
+    // Set player iframe - Warezcdn kullan (VixSrc Türkiye'de bloklu)
+    let playerUrl;
     if (mediaType === 'movie') {
-        vixsrcUrl = `https://vidsrc.to/embed/movie/${movieId}`;
+        // Warezcdn format: https://warezcdn.com/embed-movie.php?id={tmdbId}
+        playerUrl = `https://warezcdn.com/embed-movie.php?id=${movieId}`;
     } else {
         // For TV shows, start with Season 1 Episode 1
-        vixsrcUrl = `https://vidsrc.to/embed/tv/${movieId}/${currentSeason}/${currentEpisode}`;
+        // Warezcdn format: https://warezcdn.com/embed-tv.php?id={tmdbId}&season=1&episode=1
+        playerUrl = `https://warezcdn.com/embed-tv.php?id=${movieId}&season=${currentSeason}&episode=${currentEpisode}`;
         totalSeasons = movie.number_of_seasons || 1;
         
         // Show episode selector for TV shows
@@ -116,7 +118,7 @@ function displayMovieDetails(movie) {
         loadEpisodes();
     }
     
-    videoPlayer.src = vixsrcUrl;
+    videoPlayer.src = playerUrl;
     
     // Set title
     document.title = `${title} - İzle | MindMirror`;
@@ -253,8 +255,8 @@ function displayEpisodes(episodes) {
 // Play Episode
 function playEpisode(episodeNumber) {
     currentEpisode = episodeNumber;
-    const vixsrcUrl = `https://vidsrc.to/embed/tv/${movieId}/${currentSeason}/${currentEpisode}`;
-    videoPlayer.src = vixsrcUrl;
+    const playerUrl = `https://warezcdn.com/embed-tv.php?id=${movieId}&season=${currentSeason}&episode=${episodeNumber}`;
+    videoPlayer.src = playerUrl;
     
     // Update active state
     document.querySelectorAll('.episode-card').forEach(card => {
