@@ -101,15 +101,17 @@ function displayMovieDetails(movie) {
     const runtime = movie.runtime || movie.episode_run_time?.[0];
     const year = date ? new Date(date).getFullYear() : 'Bilinmiyor';
     
-    // Set player iframe - Warezcdn kullan (VixSrc Türkiye'de bloklu)
+    // Set player iframe - proxy üzerinden Warezcdn
     let playerUrl;
     if (mediaType === 'movie') {
-        // Warezcdn format: https://warezcdn.com/embed-movie.php?id={tmdbId}
-        playerUrl = `https://warezcdn.com/embed-movie.php?id=${movieId}`;
+        playerUrl = isProduction
+            ? `/api/player/movie/${movieId}`
+            : `https://warezcdn.com/embed-movie.php?id=${movieId}`;
     } else {
         // For TV shows, start with Season 1 Episode 1
-        // Warezcdn format: https://warezcdn.com/embed-tv.php?id={tmdbId}&season=1&episode=1
-        playerUrl = `https://warezcdn.com/embed-tv.php?id=${movieId}&season=${currentSeason}&episode=${currentEpisode}`;
+        playerUrl = isProduction
+            ? `/api/player/tv/${movieId}/${currentSeason}/${currentEpisode}`
+            : `https://warezcdn.com/embed-tv.php?id=${movieId}&season=${currentSeason}&episode=${currentEpisode}`;
         totalSeasons = movie.number_of_seasons || 1;
         
         // Show episode selector for TV shows
@@ -255,7 +257,9 @@ function displayEpisodes(episodes) {
 // Play Episode
 function playEpisode(episodeNumber) {
     currentEpisode = episodeNumber;
-    const playerUrl = `https://warezcdn.com/embed-tv.php?id=${movieId}&season=${currentSeason}&episode=${episodeNumber}`;
+    const playerUrl = isProduction
+        ? `/api/player/tv/${movieId}/${currentSeason}/${episodeNumber}`
+        : `https://warezcdn.com/embed-tv.php?id=${movieId}&season=${currentSeason}&episode=${episodeNumber}`;
     videoPlayer.src = playerUrl;
     
     // Update active state
