@@ -106,12 +106,12 @@ function displayMovieDetails(movie) {
     if (mediaType === 'movie') {
         playerUrl = isProduction
             ? `/api/player/movie/${movieId}`
-            : `https://vidsrc.to/embed/movie/${movieId}`;
+            : `https://vixsrc.to/embed/movie/${movieId}`;
     } else {
         // For TV shows, start with Season 1 Episode 1
         playerUrl = isProduction
             ? `/api/player/tv/${movieId}/${currentSeason}/${currentEpisode}`
-            : `https://vidsrc.to/embed/tv/${movieId}/${currentSeason}/${currentEpisode}`;
+            : `https://vixsrc.to/embed/tv/${movieId}/${currentSeason}/${currentEpisode}`;
         totalSeasons = movie.number_of_seasons || 1;
         
         // Show episode selector for TV shows
@@ -259,7 +259,7 @@ function playEpisode(episodeNumber) {
     currentEpisode = episodeNumber;
     const playerUrl = isProduction
         ? `/api/player/tv/${movieId}/${currentSeason}/${episodeNumber}`
-        : `https://vidsrc.to/embed/tv/${movieId}/${currentSeason}/${episodeNumber}`;
+        : `https://vixsrc.to/embed/tv/${movieId}/${currentSeason}/${episodeNumber}`;
     videoPlayer.src = playerUrl;
     
     // Update active state
