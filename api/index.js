@@ -25,12 +25,22 @@ module.exports = async (req, res) => {
             const playerUrl = `https://vidsrc.to/embed/${playerPath}`;
             console.log('Proxying player:', playerUrl);
             
-            const response = await fetch(playerUrl);
-            const html = await response.text();
-            
-            res.setHeader('Content-Type', 'text/html; charset=utf-8');
-            res.setHeader('X-Frame-Options', 'ALLOW');
-            return res.status(200).send(html);
+            try {
+                const response = await fetch(playerUrl, {
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                    }
+                });
+                const html = await response.text();
+                
+                res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                // X-Frame-Options header'ı kaldır veya ALLOWALL yap
+                return res.status(200).send(html);
+            } catch (error) {
+                console.error('Player proxy error:', error);
+                return res.status(500).send('<html><body>Player yüklenemedi</body></html>');
+            }
         }
         
         // TMDB API proxy
