@@ -1,13 +1,13 @@
-// API Configuration - IMDb API
+// API Configuration
 const isProduction = window.location.hostname !== 'localhost' && !window.location.protocol.includes('file');
-const BASE_URL = isProduction ? '/api/imdb' : 'https://tv-api.com/en/API';
-const API_KEY = isProduction ? '' : 'k_12345678'; // Production'da backend'de
+const BASE_URL = isProduction ? '/api/tmdb' : 'https://api.themoviedb.org/3';
+const API_KEY = isProduction ? '' : 'b7be32426cfcc04c7b0463b60d81ed3f';
 // Image config
-let IMAGE_BASE = 'https://imdb-api.com/images/'; // IMDb image base
-let POSTER_SIZE = 'original';
+let IMAGE_BASE = 'https://image.tmdb.org/t/p/';
+let POSTER_SIZE = 'w500';
 let BACKDROP_SIZE = 'original';
-const IMG_URL = () => `${IMAGE_BASE}`; // IMDb resimler direkt link
-const BACKDROP_URL = () => `${IMAGE_BASE}`;
+const IMG_URL = () => `${IMAGE_BASE}${POSTER_SIZE}`;
+const BACKDROP_URL = () => `${IMAGE_BASE}${BACKDROP_SIZE}`;
 
 // State
 let currentPage = 1;
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // IMDb image config - fallback olarak kullan
 async function loadImageConfig() {
-    console.log('IMDb kullanılıyor, image config şu anda gerekli değil');
+    console.log('Image config yükleniyor...');
 }
 
 // Event Listeners
@@ -98,24 +98,19 @@ function setupEventListeners() {
     });
 }
 
-// Load Movies - IMDb API'yi kullan
+// Load Movies - TMDB API'yi kullan
 async function loadMovies() {
     showLoading();
     
     try {
-        let url;
-        if (isProduction) {
-            url = `${BASE_URL}/${currentCategory}`;
-        } else {
-            url = `${BASE_URL}/${currentCategory}?api_key=${API_KEY}`;
-        }
-        
+        const url = isProduction 
+            ? `${BASE_URL}/${currentType}/${currentCategory}?page=${currentPage}`
+            : `${BASE_URL}/${currentType}/${currentCategory}?api_key=${API_KEY}&language=tr-TR&page=${currentPage}`;
         const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         
-        displayMovies(data.items || data.results || []);
-        totalPages = 1; // IMDb pagination farklı çalışıyor
+        displayMovies(data.results);
+        totalPages = data.total_pages;
         updatePagination();
     } catch (error) {
         console.error('Filmler yüklenirken hata oluştu:', error);
@@ -123,13 +118,13 @@ async function loadMovies() {
             <div class="loading">
                 <i class="fas fa-exclamation-circle"></i>
                 <p>Filmler yüklenirken bir hata oluştu.</p>
-                <p style="font-size: 14px; margin-top: 10px;">Backend kontrolünü yapın.</p>
+                <p style="font-size: 14px; margin-top: 10px;">Server çalışıyor mu kontrol edin.</p>
             </div>
         `;
     }
 }
 
-// Search Movies - IMDb Search endpoint
+// Search Movies
 async function searchMovies() {
     const query = searchInput.value.trim();
     
@@ -142,14 +137,20 @@ async function searchMovies() {
     currentPage = 1;
     
     try {
+        // Multi-search kullan - hem film hem dizi ara
         const url = isProduction
-            ? `/api/imdb/SearchMovie?expression=${encodeURIComponent(query)}`
-            : `https://tv-api.com/en/API/SearchMovie/k_12345678?expression=${encodeURIComponent(query)}`;
+            ? `${BASE_URL}/search/multi?query=${encodeURIComponent(query)}&page=${currentPage}`
+            : `${BASE_URL}/search/multi?api_key=${API_KEY}&language=tr-TR&query=${encodeURIComponent(query)}&page=${currentPage}`;
         const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         
-        displayMovies(data.results || []);
+        // Sadece film ve TV sonuçlarını filtrele
+        const filtered = data.results.filter(item => 
+            item.media_type === 'movie' || item.media_type === 'tv'
+        );
+        
+        displayMovies(filtered);
+        totalPages = data.total_pages;
         updatePagination();
     } catch (error) {
         console.error('Arama sırasında hata oluştu:', error);
@@ -175,23 +176,24 @@ function displayMovies(movies) {
     }
     
     moviesGrid.innerHTML = movies.map(movie => {
-        // IMDb formatı uyarlandı
-        const title = movie.title || movie.originalTitle || movie.fullTitle;
-        const year = movie.year || movie.description || '';
-        const rating = movie.imDbRating || 'N/A';
-        const posterPath = movie.image; // IMDb direkt image URL veriyor
-        const imdbId = movie.id; // IMDb ID'si (tt...)
+        // TMDB formatı
+        const title = movie.title || movie.name;
+        const year = movie.release_date ? new Date(movie.release_date).getFullYear() : movie.first_air_date ? new Date(movie.first_air_date).getFullYear() : '';
+        const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A';
+        const posterPath = movie.poster_path;
+        const id = movie.id;
+        const type = movie.media_type || 'movie';
         
         return `
-            <div class="movie-card" onclick="window.location.href='watch.html?id=${imdbId}&type=movie'">
+            <div class="movie-card" onclick="window.location.href='watch.html?id=${id}&type=${type}'">
                 ${posterPath 
-                    ? `<img src="${posterPath}" alt="${title}" onerror="this.onerror=null;this.replaceWith('<div class=\'no-image\'><i class=\'fas fa-film\'></i></div>')">`
+                    ? `<img src="${IMG_URL()}${posterPath}" alt="${title}" onerror="this.onerror=null;this.replaceWith('<div class=\'no-image\'><i class=\'fas fa-film\'></i></div>')">`
                     : `<div class="no-image"><i class="fas fa-film"></i></div>`
                 }
                 <div class="movie-info">
                     <div class="movie-header">
                         <h3 class="movie-title">${title}</h3>
-                        <span class="type-badge">Film</span>
+                        <span class="type-badge">${type === 'tv' ? 'Dizi' : 'Film'}</span>
                     </div>
                     <div class="rating">
                         <i class="fas fa-star"></i>
@@ -207,30 +209,28 @@ function displayMovies(movies) {
     }).join('');
 }
 
-// Show Movie Details - IMDb API'den al
+// Show Movie Details - TMDB API'den al
 async function showMovieDetails(id) {
     try {
         const url = isProduction
-            ? `/api/imdb/Title/${id}`
-            : `https://tv-api.com/en/API/Title/k_12345678/${id}`;
+            ? `/api/tmdb/${currentType}/${id}`
+            : `${BASE_URL}/${currentType}/${id}?api_key=${API_KEY}&language=tr-TR`;
         const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const movie = await response.json();
         
-        const title = movie.fullTitle || movie.title;
-        const year = movie.year;
-        const rating = movie.imDbRating || 'N/A';
-        const runtime = movie.runtimeStr;
-        const posterPath = movie.image;
-        const description = movie.plot || '';
+        const title = movie.title || movie.name;
+        const year = movie.release_date ? new Date(movie.release_date).getFullYear() : movie.first_air_date ? new Date(movie.first_air_date).getFullYear() : '';
+        const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A';
+        const runtime = movie.runtime || (movie.episode_run_time && movie.episode_run_time[0]);
+        const posterPath = movie.poster_path;
+        const overview = movie.overview;
         
-        const genres = movie.genreList?.map(g => `<span class="genre-tag">${g}</span>`).join('') || '';
-        const directors = movie.directors ? movie.directors.split(', ').slice(0, 3).join(', ') : 'Bilinmiyor';
-        const actors = movie.actorList?.map(a => a.name).join(', ') || 'Bilinmiyor';
-        const imdbId = movie.id;
+        const genres = movie.genres?.map(g => `<span class="genre-tag">${g.name}</span>`).join('') || '';
+        const director = movie.credits?.crew?.find(person => person.job === 'Director');
+        const cast = movie.credits?.cast?.slice(0, 5).map(actor => actor.name).join(', ') || 'Bilgi yok';
         
         modalBody.innerHTML = `
-            ${posterPath ? `<img src="${posterPath}" alt="${title}" class="modal-backdrop" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 10px;">` : ''}
+            ${posterPath ? `<img src="${IMG_URL()}${posterPath}" alt="${title}" class="modal-backdrop" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 10px;">` : ''}
             <div class="modal-details">
                 <h2>${title}</h2>
                 <div class="modal-meta">
@@ -247,53 +247,33 @@ async function showMovieDetails(id) {
                     ${runtime ? `
                     <div class="meta-item">
                         <i class="fas fa-clock"></i>
-                        <span>${runtime}</span>
+                        <span>${runtime} dk</span>
                     </div>
                     ` : ''}
                 </div>
                 
                 ${genres ? `<div class="genres" style="margin: 15px 0;">${genres}</div>` : ''}
                 
-                <!-- Player -->
-                <div class="player-container" style="margin: 30px 0;">
-                    <button onclick="loadPlayer('${imdbId}')" class="play-button" id="playButton">
-                        <i class="fas fa-play"></i> İzle
-                    </button>
-                    <div id="playerFrame" style="display: none; position: relative;">
-                        <iframe 
-                            id="playerIframe"
-                            width="100%" 
-                            height="500" 
-                            frameborder="0" 
-                            allowfullscreen
-                            sandbox="allow-same-origin allow-scripts allow-presentation allow-popups"
-                            style="border-radius: 15px;">
-                        </iframe>
-                    </div>
-                </div>
-                
-                ${description ? `
                 <div>
                     <h3 style="margin-top: 20px; margin-bottom: 10px;">Özet</h3>
-                    <p class="modal-overview">${description}</p>
+                    <p class="modal-overview">${overview || 'Özet bilgisi bulunmuyor.'}</p>
                 </div>
-                ` : ''}
                 
-                ${directors ? `
+                ${director ? `
                 <div>
                     <h3 style="margin-top: 20px; margin-bottom: 10px;">Yönetmen</h3>
-                    <p style="color: var(--text-secondary);">${directors}</p>
+                    <p style="color: var(--text-secondary);">${director.name}</p>
                 </div>
                 ` : ''}
                 
                 <div>
                     <h3 style="margin-top: 20px; margin-bottom: 10px;">Oyuncular</h3>
-                    <p style="color: var(--text-secondary);">${actors}</p>
+                    <p style="color: var(--text-secondary);">${cast}</p>
                 </div>
                 
                 <div style="margin-top: 30px;">
-                    <a href="https://www.imdb.com/title/${imdbId}" target="_blank" style="background: var(--accent-color); color: white; padding: 12px 30px; border-radius: 25px; text-decoration: none; display: inline-block; transition: all 0.3s;">
-                        <i class="fas fa-external-link-alt"></i> IMDb'de Aç
+                    <a href="watch.html?id=${id}&type=${currentType}" class="play-button" style="display: inline-block; background: var(--accent-color); color: white; padding: 12px 30px; border-radius: 25px; text-decoration: none; transition: all 0.3s;">
+                        <i class="fas fa-play"></i> İzle
                     </a>
                 </div>
             </div>
@@ -306,7 +286,6 @@ async function showMovieDetails(id) {
             <div style="padding: 40px; text-align: center;">
                 <i class="fas fa-exclamation-circle" style="font-size: 48px; color: var(--accent-color);"></i>
                 <p style="margin-top: 20px;">Film detayları yüklenirken bir hata oluştu.</p>
-                <p style="font-size: 14px; color: var(--text-secondary);">${error.message}</p>
             </div>
         `;
         modal.style.display = 'block';
@@ -330,7 +309,7 @@ function showLoading() {
     `;
 }
 
-// Load Player - watch.html'ye yönlendir
+// Load Player
 function loadPlayer(imdbId) {
-    window.location.href = `watch.html?id=${imdbId}&type=movie`;
+    window.location.href = `watch.html?id=${imdbId}&type=${currentType}`;
 }
