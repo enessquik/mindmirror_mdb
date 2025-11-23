@@ -43,6 +43,27 @@
 
             <!-- Player Container -->
             <div id="playerSection" style="display: none;">
+                <!-- Player Controls -->
+                <div class="player-controls" style="background: var(--bg-secondary); padding: 15px; border-radius: 10px 10px 0 0; display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="color: var(--text-secondary); font-size: 12px; display: block; margin-bottom: 5px;">
+                            <i class="fas fa-server"></i> Sağlayıcı
+                        </label>
+                        <select id="providerSelect" onchange="switchProvider()" style="width: 100%; padding: 8px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 5px; color: var(--text-primary);">
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="color: var(--text-secondary); font-size: 12px; display: block; margin-bottom: 5px;">
+                            <i class="fas fa-closed-captioning"></i> Altyazı
+                        </label>
+                        <select id="subtitleSelect" onchange="changeSubtitle()" style="width: 100%; padding: 8px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 5px; color: var(--text-primary);">
+                            <option value="tr">Türkçe</option>
+                            <option value="en">English</option>
+                            <option value="off">Kapalı</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="player-wrapper">
                     <iframe 
                         id="videoPlayer"

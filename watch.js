@@ -18,6 +18,42 @@ const mediaType = urlParams.get('type') || 'movie';
 let currentSeason = 1;
 let currentEpisode = 1;
 let totalSeasons = 1;
+let currentProvider = 0; // Provider index
+let currentSubtitle = 'tr'; // Default Türkçe
+
+// Player Providers
+const providers = [
+    {
+        name: 'VidSrc Embed',
+        getURL: (id, type, s, e) => type === 'movie' 
+            ? `https://vidsrc-embed.ru/embed/movie?tmdb=${id}`
+            : `https://vidsrc-embed.ru/embed/tv?tmdb=${id}&season=${s}&episode=${e}`
+    },
+    {
+        name: 'VidSrc ME',
+        getURL: (id, type, s, e) => type === 'movie'
+            ? `https://vidsrc.me/embed/movie?tmdb=${id}`
+            : `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`
+    },
+    {
+        name: 'VidSrc XYZ',
+        getURL: (id, type, s, e) => type === 'movie'
+            ? `https://vidsrc.xyz/embed/movie?tmdb=${id}`
+            : `https://vidsrc.xyz/embed/tv?tmdb=${id}&season=${s}&episode=${e}`
+    },
+    {
+        name: '2Embed',
+        getURL: (id, type, s, e) => type === 'movie'
+            ? `https://www.2embed.cc/embed/${id}`
+            : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`
+    },
+    {
+        name: 'MultiEmbed',
+        getURL: (id, type, s, e) => type === 'movie'
+            ? `https://multiembed.mov/?video_id=${id}&tmdb=1`
+            : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`
+    }
+];
 
 // DOM Elements
 const loading = document.getElementById('loading');
@@ -101,22 +137,21 @@ function displayMovieDetails(movie) {
     const runtime = movie.runtime || movie.episode_run_time?.[0];
     const year = date ? new Date(date).getFullYear() : 'Bilinmiyor';
     
-    // Set player iframe - vidsrc-embed.ru kullan (TMDB ile)
-    let playerUrl;
-    if (mediaType === 'movie') {
-        playerUrl = `https://vidsrc-embed.ru/embed/movie?tmdb=${movieId}`;
-    } else {
-        // For TV shows, start with Season 1 Episode 1
-        playerUrl = `https://vidsrc-embed.ru/embed/tv?tmdb=${movieId}&season=${currentSeason}&episode=${currentEpisode}`;
+    // Setup provider dropdown
+    const providerSelect = document.getElementById('providerSelect');
+    providerSelect.innerHTML = providers.map((p, i) => 
+        `<option value="${i}">${p.name}</option>`
+    ).join('');
+    
+    // Set player with current provider
+    updatePlayerURL();
+    
+    if (mediaType !== 'movie') {
         totalSeasons = movie.number_of_seasons || 1;
-        
-        // Show episode selector for TV shows
         episodeSelector.style.display = 'block';
         setupSeasonSelector(totalSeasons);
         loadEpisodes();
     }
-    
-    videoPlayer.src = playerUrl;
     
     // Player yüklenme hatası için fallback mesaj ekle
     const playerContainer = videoPlayer.parentElement;
@@ -298,4 +333,35 @@ function playEpisode(episodeNumber) {
     
     // Scroll to player
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Update player URL based on provider and subtitle
+function updatePlayerURL() {
+    const provider = providers[currentProvider];
+    const url = provider.getURL(movieId, mediaType, currentSeason, currentEpisode);
+    
+    // Add subtitle parameter if supported
+    let finalURL = url;
+    if (currentSubtitle !== 'off') {
+        // Some providers support sub parameter
+        finalURL += (url.includes('?') ? '&' : '?') + 'sub=' + currentSubtitle;
+    }
+    
+    videoPlayer.src = finalURL;
+}
+
+// Switch provider
+function switchProvider() {
+    const select = document.getElementById('providerSelect');
+    currentProvider = parseInt(select.value);
+    updatePlayerURL();
+    console.log('Provider değiştirildi:', providers[currentProvider].name);
+}
+
+// Change subtitle
+function changeSubtitle() {
+    const select = document.getElementById('subtitleSelect');
+    currentSubtitle = select.value;
+    updatePlayerURL();
+    console.log('Altyazı değiştirildi:', currentSubtitle);
 }
