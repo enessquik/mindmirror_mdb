@@ -2,6 +2,7 @@
 const isProduction = window.location.hostname !== 'localhost' && !window.location.protocol.includes('file');
 const BASE_URL = isProduction ? '/api/tmdb' : 'https://api.themoviedb.org/3';
 const API_KEY = isProduction ? '' : 'b7be32426cfcc04c7b0463b60d81ed3f';
+const PROXY_URL = '/api/proxy';
 
 // Dinamik image config
 let IMAGE_BASE = 'https://image.tmdb.org/t/p/';
@@ -11,6 +12,29 @@ let BACKDROP_SIZE = 'original';
 const IMG_URL = () => `${IMAGE_BASE}${POSTER_SIZE}`;
 const STILL_URL = () => `${IMAGE_BASE}${STILL_SIZE}`;
 const BACKDROP_URL = () => `${IMAGE_BASE}${BACKDROP_SIZE}`;
+
+// Proxy Utility - engellenen API'ler için kullan
+async function fetchViaProxy(url, options = {}) {
+    const encodedUrl = encodeURIComponent(url);
+    const proxyUrl = `${PROXY_URL}?url=${encodedUrl}`;
+    
+    try {
+        const response = await fetch(proxyUrl, {
+            method: options.method || 'GET',
+            headers: options.headers || { 'Content-Type': 'application/json' },
+            body: options.body ? JSON.stringify(options.body) : undefined,
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Proxy error: ${response.status}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Proxy request failed:', error);
+        throw error;
+    }
+}
 
 // Get URL parameters
 const urlParams = new URLSearchParams(window.location.search);
