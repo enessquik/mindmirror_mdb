@@ -302,6 +302,7 @@ async function showMovieDetails(id) {
                             height="500" 
                             frameborder="0" 
                             allowfullscreen
+                            sandbox="allow-same-origin allow-scripts allow-presentation"
                             style="border-radius: 15px;">
                         </iframe>
                     </div>
