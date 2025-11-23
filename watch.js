@@ -191,10 +191,10 @@ function displayMovieDetails(movie) {
         min-width: 300px;
     `;
     errorMessage.innerHTML = `
-        <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e50914; margin-bottom: 20px; display: block;"></i>
+        <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #dd1f29; margin-bottom: 20px; display: block;"></i>
         <h3 style="margin: 0 0 15px 0;">Bu film şu anda mevcut değil.</h3>
         <p style="margin: 0; color: #b3b3b3; font-size: 14px;">Lütfen daha sonra tekrar deneyiniz.</p>
-        <a href="index.html" style="margin-top: 20px; display: inline-block; background: #e50914; color: white; padding: 10px 25px; border-radius: 5px; text-decoration: none;">Ana Sayfaya Dön</a>
+        <a href="index.html" style="margin-top: 20px; display: inline-block; background: #dd1f29; color: white; padding: 10px 25px; border-radius: 5px; text-decoration: none;">Ana Sayfaya Dön</a>
     `;
     playerContainer.parentElement.insertBefore(errorMessage, playerContainer.nextSibling);
     

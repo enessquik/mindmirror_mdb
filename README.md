@@ -56,7 +56,7 @@ mindmirror_mdb/
 :root {
     --bg-primary: #0f0f0f;
     --bg-secondary: #1a1a1a;
-    --accent-color: #e50914;
+    --accent-color: #dd1f29;
     --text-primary: #ffffff;
     /* ... diğer renkler */
 }
