@@ -11,7 +11,7 @@ const BACKDROP_URL = () => `${IMAGE_BASE}${BACKDROP_SIZE}`;
 
 // State
 let currentPage = 1;
-let currentCategory = 'MostPopularMovies'; // IMDb endpoint
+let currentCategory = 'popular'; // TMDB endpoint
 let currentType = 'movie';
 let totalPages = 1;
 
@@ -103,14 +103,24 @@ async function loadMovies() {
     showLoading();
     
     try {
-        const url = isProduction 
-            ? `${BASE_URL}/${currentType}/${currentCategory}?page=${currentPage}`
-            : `${BASE_URL}/${currentType}/${currentCategory}?api_key=${API_KEY}&language=tr-TR&page=${currentPage}`;
+        // TMDB'nin doğru endpoint yapısı: /movie/{category} veya /tv/{category}
+        let url;
+        if (isProduction) {
+            url = `${BASE_URL}/${currentType}/${currentCategory}?page=${currentPage}`;
+        } else {
+            url = `${BASE_URL}/${currentType}/${currentCategory}?api_key=${API_KEY}&language=tr-TR&page=${currentPage}`;
+        }
+        
+        console.log('Loading from:', url);
         const response = await fetch(url);
         const data = await response.json();
         
+        if (!data.results || data.results.length === 0) {
+            throw new Error('Sonuç bulunamadı');
+        }
+        
         displayMovies(data.results);
-        totalPages = data.total_pages;
+        totalPages = data.total_pages || 1;
         updatePagination();
     } catch (error) {
         console.error('Filmler yüklenirken hata oluştu:', error);
@@ -118,7 +128,7 @@ async function loadMovies() {
             <div class="loading">
                 <i class="fas fa-exclamation-circle"></i>
                 <p>Filmler yüklenirken bir hata oluştu.</p>
-                <p style="font-size: 14px; margin-top: 10px;">Server çalışıyor mu kontrol edin.</p>
+                <p style="font-size: 14px; margin-top: 10px;">Hata: ${error.message}</p>
             </div>
         `;
     }

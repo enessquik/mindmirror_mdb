@@ -62,7 +62,8 @@ module.exports = async (req, res) => {
         // TMDB API proxy
         if (path.startsWith('tmdb/')) {
             const tmdbPath = path.replace('tmdb/', '');
-            const tmdbUrl = `${TMDB_BASE_URL}/${tmdbPath}?${queryString}&api_key=${TMDB_API_KEY}&language=tr-TR`;
+            const separator = queryString ? '&' : '?';
+            const tmdbUrl = `${TMDB_BASE_URL}/${tmdbPath}${queryString ? '?' + queryString : ''}${separator}api_key=${TMDB_API_KEY}&language=tr-TR`;
             
             console.log('Proxying TMDB:', tmdbUrl);
             
