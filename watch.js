@@ -405,6 +405,14 @@ function updatePlayerURL() {
     }
     
     videoPlayer.src = finalURL;
+    
+    // 2Embed.cc için sandbox'ı kaldır, diğerleri için koru
+    if (provider.name === '2Embed.cc') {
+        videoPlayer.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-presentation allow-forms');
+    } else {
+        videoPlayer.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-presentation');
+    }
+    
     console.log('Player - Provider:', providers[currentProvider].name, 'URL:', finalURL);
 }
 
