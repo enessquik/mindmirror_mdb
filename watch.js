@@ -21,37 +21,43 @@ let totalSeasons = 1;
 let currentProvider = 0; // Provider index
 let currentSubtitle = 'tr'; // Default Türkçe
 
-// Player Providers
+// Player Providers - Güvenilir kaynaklar
 const providers = [
     {
-        name: 'VidSrc Embed',
+        name: 'NovaServer',
         getURL: (id, type, s, e) => type === 'movie' 
-            ? `https://vidsrc-embed.ru/embed/movie?tmdb=${id}`
-            : `https://vidsrc-embed.ru/embed/tv?tmdb=${id}&season=${s}&episode=${e}`
+            ? `https://novaserver.com/movie/${id}`
+            : `https://novaserver.com/tv/${id}-${s}-${e}`
     },
     {
-        name: 'VidSrc ME',
+        name: 'Vidsrc.me',
         getURL: (id, type, s, e) => type === 'movie'
             ? `https://vidsrc.me/embed/movie?tmdb=${id}`
             : `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`
     },
     {
-        name: 'VidSrc XYZ',
+        name: 'Vidbinge',
         getURL: (id, type, s, e) => type === 'movie'
-            ? `https://vidsrc.xyz/embed/movie?tmdb=${id}`
-            : `https://vidsrc.xyz/embed/tv?tmdb=${id}&season=${s}&episode=${e}`
+            ? `https://vidbinge.dev/movie/${id}`
+            : `https://vidbinge.dev/tv/${id}/${s}/${e}`
     },
     {
-        name: '2Embed',
+        name: 'MovieBox Pro',
         getURL: (id, type, s, e) => type === 'movie'
-            ? `https://www.2embed.cc/embed/${id}`
-            : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`
+            ? `https://embed.smashystream.com/movie/${id}`
+            : `https://embed.smashystream.com/tv/${id}/${s}/${e}`
     },
     {
-        name: 'MultiEmbed',
+        name: 'Embed.su',
         getURL: (id, type, s, e) => type === 'movie'
-            ? `https://multiembed.mov/?video_id=${id}&tmdb=1`
-            : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`
+            ? `https://embed.su/embed/movie/${id}`
+            : `https://embed.su/embed/tv/${id}/${s}/${e}`
+    },
+    {
+        name: 'HiMovies',
+        getURL: (id, type, s, e) => type === 'movie'
+            ? `https://himovies.to/watch/movie/${id}`
+            : `https://himovies.to/watch/tv/${id}-${s}-${e}`
     }
 ];
 

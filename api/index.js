@@ -1,7 +1,9 @@
 const fetch = require('node-fetch');
 
-const API_KEY = process.env.TMDB_API_KEY;
-const BASE_URL = 'https://api.themoviedb.org/3';
+const TMDB_API_KEY = process.env.TMDB_API_KEY;
+const IMDB_API_KEY = process.env.IMDB_API_KEY || 'k_12345678'; // Default key
+const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+const IMDB_BASE_URL = 'https://tv-api.com/en/API';
 
 module.exports = async (req, res) => {
     // CORS headers
@@ -19,10 +21,23 @@ module.exports = async (req, res) => {
         const path = urlParts[0].replace('/api/', '');
         const queryString = urlParts[1] || '';
         
-        // TMDB API proxy - path /api/tmdb/ şeklinde gelir
+        // IMDb API proxy
+        if (path.startsWith('imdb/')) {
+            const imdbPath = path.replace('imdb/', '');
+            const imdbUrl = `${IMDB_BASE_URL}/${imdbPath}/${IMDB_API_KEY}${queryString ? '?' + queryString : ''}`;
+            
+            console.log('Proxying IMDb:', imdbUrl);
+            
+            const response = await fetch(imdbUrl);
+            const data = await response.json();
+            
+            return res.status(200).json(data);
+        }
+        
+        // TMDB API proxy
         if (path.startsWith('tmdb/')) {
             const tmdbPath = path.replace('tmdb/', '');
-            const tmdbUrl = `${BASE_URL}/${tmdbPath}?${queryString}&api_key=${API_KEY}&language=tr-TR`;
+            const tmdbUrl = `${TMDB_BASE_URL}/${tmdbPath}?${queryString}&api_key=${TMDB_API_KEY}&language=tr-TR`;
             
             console.log('Proxying TMDB:', tmdbUrl);
             
@@ -32,12 +47,12 @@ module.exports = async (req, res) => {
             return res.status(200).json(data);
         }
         
-        // Fallback: eğer tmdb/ prefix yoksa direkt path'i TMDB'ye gönder (eskiyle uyumluluk)
-        const tmdbUrl = `${BASE_URL}/${path}?${queryString}&api_key=${API_KEY}&language=tr-TR`;
+        // Fallback: IMDb proxy (default)
+        const imdbUrl = `${IMDB_BASE_URL}/${path}/${IMDB_API_KEY}${queryString ? '?' + queryString : ''}`;
         
-        console.log('Fetching TMDB (fallback):', tmdbUrl);
+        console.log('Fetching IMDb (fallback):', imdbUrl);
         
-        const response = await fetch(tmdbUrl);
+        const response = await fetch(imdbUrl);
         const data = await response.json();
         
         return res.status(200).json(data);
