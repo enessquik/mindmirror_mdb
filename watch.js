@@ -13,13 +13,14 @@ const BACKDROP_URL = () => `${IMAGE_BASE}${BACKDROP_SIZE}`;
 
 // Get URL parameters
 const urlParams = new URLSearchParams(window.location.search);
-const movieId = urlParams.get('id');
+const movieId = urlParams.get('id'); // IMDb ID (tt...)
+let tmdbId = null; // Will be converted from IMDb
 const mediaType = urlParams.get('type') || 'movie';
 let currentSeason = 1;
 let currentEpisode = 1;
 let totalSeasons = 1;
-let currentProvider = 0; // Provider index
-let currentSubtitle = 'tr'; // Default Türkçe
+let currentProvider = 0;
+let currentSubtitle = 'tr';
 
 // Player Providers - Güvenilir kaynaklar
 const providers = [
@@ -85,6 +86,27 @@ if (movieId) {
 }
 
 async function init() {
+    // İlk olarak IMDb ID'yi TMDB ID'sine çevir
+    try {
+        const convertUrl = isProduction 
+            ? `/api/convert/imdb-to-tmdb/${movieId}`
+            : `${BASE_URL}/../convert/imdb-to-tmdb/${movieId}`; // Geçici - production'da çalışacak
+        
+        const response = await fetch(convertUrl);
+        const conversionResult = await response.json();
+        
+        if (conversionResult.id) {
+            tmdbId = conversionResult.id;
+            console.log(`IMDb ${movieId} -> TMDB ${tmdbId}`);
+        } else {
+            console.warn('TMDB ID bulunamadı, IMDb ID kullan:', movieId);
+            tmdbId = movieId;
+        }
+    } catch (e) {
+        console.warn('Dönüştürme başarısız, IMDb ID kullan:', movieId, e);
+        tmdbId = movieId;
+    }
+    
     loadMovieDetails();
 }
 
@@ -233,6 +255,22 @@ function displayMovieDetails(movie) {
     playerSection.style.display = 'block';
 }
 
+// Update player URL based on provider and subtitle
+function updatePlayerURL() {
+    const provider = providers[currentProvider];
+    // Provider'lar TMDB ID'sini kullanıyor
+    const url = provider.getURL(tmdbId || movieId, mediaType, currentSeason, currentEpisode);
+    
+    // Add subtitle parameter if supported
+    let finalURL = url;
+    if (currentSubtitle !== 'off') {
+        finalURL += (url.includes('?') ? '&' : '?') + 'sub=' + currentSubtitle;
+    }
+    
+    videoPlayer.src = finalURL;
+    console.log('Player güncellenmiş - Provider:', providers[currentProvider].name, 'TMDB ID:', tmdbId || movieId, 'URL:', finalURL);
+}
+
 // Switch provider
 function switchProvider() {
     const select = document.getElementById('providerSelect');
@@ -248,3 +286,5 @@ function changeSubtitle() {
     updatePlayerURL();
     console.log('Altyazı değiştirildi:', currentSubtitle);
 }
+
+
