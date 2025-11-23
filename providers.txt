@@ -1,0 +1,71 @@
+1. moviesapi.club
+Usage sample for movie:
+
+https://moviesapi.club/movie/{tmdb_id}
+https://moviesapi.club/movie/{imdb_id}
+Usage sample for TV show:
+
+https://moviesapi.club/tv/{tmdb_id}–{season}–{episode}
+
+2. vidsrc.me
+Usage sample for movie:
+
+https://vidsrc.me/embed/movie?tmdb={tmdb_id}
+
+Usage sample for TV show:
+
+https://vidsrc.me/embed/tv?tmdb={tmdb_id}&season={season}&episode={episode}
+
+3. vidsrc.xyz
+Usage sample for movie:
+
+https://vidsrc.xyz/embed/movie?tmdb={tmdb_id}
+
+Usage sample for TV show:
+
+https://vidsrc.xyz/embed/tv?tmdb={tmdb_id}&season={season}&episode={episode}
+
+4. embed.su
+Usage sample for movie:
+
+https://embed.su/embed/movie/{tmdb_id}
+
+Usage sample for TV show:
+
+https://embed.su/embed/tv/{tmdb_id}/{season}/{episode}
+
+5. 2embed.cc
+Usage sample for movie:
+
+https://www.2embed.cc/embed/{tmdb_id}
+
+Usage sample for TV show:
+
+https://www.2embed.cc/embedtv/{tmdb_id}&s={season}&e={episode}
+
+6. multiembed.mov
+Usage sample for movie:
+
+https://multiembed.mov/?video_id={tmdb_id}&tmdb=1
+
+Usage sample for TV show:
+
+https://multiembed.mov/?video_id={tmdb_id}&tmdb=1&s={season}&e={episode}
+
+7. player.smashy.stream
+Usage sample for movie:
+
+https://player.smashy.stream/movie/{tmdb_id}
+
+Usage sample for TV show:
+
+https://player.smashy.stream/tv/{tmdb_id}?s={season}&e={episode}
+
+8. player.autoembed.cc
+Usage sample for movie:
+
+https://player.autoembed.cc/embed/movie/{tmdb_id}
+
+Usage sample for TV show:
+
+https://player.autoembed.cc/embed/tv/{tmdb_id}/{season}/{episode}
