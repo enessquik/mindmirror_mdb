@@ -7,15 +7,22 @@
     "start": "node api/server.js",
     "dev": "nodemon api/server.js"
   },
-  "keywords": ["tmdb", "movies", "tv", "api", "vercel"],
+  "keywords": [
+    "tmdb",
+    "movies",
+    "tv",
+    "api",
+    "vercel"
+  ],
   "author": "",
   "license": "ISC",
   "engines": {
     "node": ">=18.x"
   },
   "dependencies": {
-    "node-fetch": "^2.7.0",
-    "dotenv": "^16.3.1"
+    "@vercel/analytics": "^1.5.0",
+    "dotenv": "^16.3.1",
+    "node-fetch": "^2.7.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
