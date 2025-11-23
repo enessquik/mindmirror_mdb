@@ -118,6 +118,40 @@ function displayMovieDetails(movie) {
     
     videoPlayer.src = playerUrl;
     
+    // Player yüklenme hatası için fallback mesaj ekle
+    const playerContainer = videoPlayer.parentElement;
+    const errorMessage = document.createElement('div');
+    errorMessage.id = 'playerError';
+    errorMessage.style.cssText = `
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.9);
+        color: #fff;
+        padding: 40px;
+        border-radius: 15px;
+        text-align: center;
+        z-index: 10;
+        min-width: 300px;
+    `;
+    errorMessage.innerHTML = `
+        <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e50914; margin-bottom: 20px; display: block;"></i>
+        <h3 style="margin: 0 0 15px 0;">Bu film şu anda mevcut değil.</h3>
+        <p style="margin: 0; color: #b3b3b3; font-size: 14px;">Lütfen daha sonra tekrar deneyiniz.</p>
+        <a href="index.html" style="margin-top: 20px; display: inline-block; background: #e50914; color: white; padding: 10px 25px; border-radius: 5px; text-decoration: none;">Ana Sayfaya Dön</a>
+    `;
+    playerContainer.parentElement.insertBefore(errorMessage, playerContainer.nextSibling);
+    
+    // Player error kontrolü
+    videoPlayer.addEventListener('error', () => {
+        videoPlayer.style.display = 'none';
+        errorMessage.style.display = 'block';
+    });
+    
+    videoPlayer.style.position = 'relative';
+    
     // Set title
     document.title = `${title} - İzle | MindMirror`;
     movieTitle.textContent = title;

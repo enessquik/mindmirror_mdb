@@ -370,6 +370,38 @@ function showLoading() {
 function loadPlayer() {
     const playButton = document.getElementById('playButton');
     const playerFrame = document.getElementById('playerFrame');
+    const iframe = playerFrame.querySelector('iframe');
+    
+    // Error handling
+    const errorDiv = document.createElement('div');
+    errorDiv.id = 'modalPlayerError';
+    errorDiv.style.cssText = `
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.95);
+        color: #fff;
+        padding: 40px;
+        border-radius: 15px;
+        text-align: center;
+        z-index: 10;
+        min-width: 300px;
+        width: 90%;
+    `;
+    errorDiv.innerHTML = `
+        <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e50914; margin-bottom: 20px; display: block;"></i>
+        <h3 style="margin: 0 0 15px 0;">Bu film şu anda mevcut değil.</h3>
+        <p style="margin: 0; color: #b3b3b3; font-size: 14px;">Lütfen daha sonra tekrar deneyiniz.</p>
+    `;
+    
+    iframe.addEventListener('error', () => {
+        playerFrame.style.display = 'none';
+        errorDiv.style.display = 'block';
+    });
+    
+    playerFrame.parentElement.insertBefore(errorDiv, playerFrame.nextSibling);
     
     playButton.style.display = 'none';
     playerFrame.style.display = 'block';
