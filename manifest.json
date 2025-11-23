@@ -10,20 +10,32 @@
   "theme_color": "#e50914",
   "icons": [
     {
-      "src": "favicon.png",
-      "sizes": "192x192",
+      "src": "favicon-32.png",
+      "sizes": "32x32",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "favicon.png",
+      "src": "favicon-64.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "favicon.png",
-      "sizes": "192x192",
+      "src": "favicon-512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
@@ -31,13 +43,13 @@
   "categories": ["entertainment", "video"],
   "screenshots": [
     {
-      "src": "favicon.png",
+      "src": "favicon-512.png",
       "sizes": "540x720",
       "type": "image/png",
       "form_factor": "narrow"
     },
     {
-      "src": "favicon.png",
+      "src": "favicon-512.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide"
@@ -51,8 +63,8 @@
       "url": "/?category=popular",
       "icons": [
         {
-          "src": "favicon.png",
-          "sizes": "96x96",
+          "src": "favicon-128.png",
+          "sizes": "128x128",
           "type": "image/png"
         }
       ]
