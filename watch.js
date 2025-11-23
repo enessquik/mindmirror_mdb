@@ -46,8 +46,26 @@ let totalSeasons = 1;
 let currentProvider = 0;
 let currentSubtitle = 'tr';
 
-// Player Providers - 8 sağlayıcı
+// Player Providers - 8 sağlayıcı (en iyileri üstte)
 const providers = [
+    {
+        name: 'Player.AutoEmbed',
+        getURL: (id, type, s, e) => type === 'movie'
+            ? `https://player.autoembed.cc/embed/movie/${id}`
+            : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`
+    },
+    {
+        name: 'MultiEmbed.mov',
+        getURL: (id, type, s, e) => type === 'movie'
+            ? `https://multiembed.mov/?video_id=${id}&tmdb=1`
+            : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`
+    },
+    {
+        name: '2Embed.cc',
+        getURL: (id, type, s, e) => type === 'movie'
+            ? `https://www.2embed.cc/embed/${id}`
+            : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`
+    },
     {
         name: 'MoviesAPI.club',
         getURL: (id, type, s, e) => type === 'movie'
@@ -73,28 +91,10 @@ const providers = [
             : `https://embed.su/embed/tv/${id}/${s}/${e}`
     },
     {
-        name: '2Embed.cc',
-        getURL: (id, type, s, e) => type === 'movie'
-            ? `https://www.2embed.cc/embed/${id}`
-            : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`
-    },
-    {
-        name: 'MultiEmbed.mov',
-        getURL: (id, type, s, e) => type === 'movie'
-            ? `https://multiembed.mov/?video_id=${id}&tmdb=1`
-            : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`
-    },
-    {
         name: 'Player.Smashy',
         getURL: (id, type, s, e) => type === 'movie'
             ? `https://player.smashy.stream/movie/${id}`
             : `https://player.smashy.stream/tv/${id}?s=${s}&e=${e}`
-    },
-    {
-        name: 'Player.AutoEmbed',
-        getURL: (id, type, s, e) => type === 'movie'
-            ? `https://player.autoembed.cc/embed/movie/${id}`
-            : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`
     }
 ];
 
@@ -113,6 +113,7 @@ const movieInfo = document.getElementById('movieInfo');
 const episodeSelector = document.getElementById('episodeSelector');
 const seasonSelect = document.getElementById('seasonSelect');
 const episodesGrid = document.getElementById('episodesGrid');
+const watchSearchInput = document.getElementById('watchSearchInput');
 
 // Initialize
 if (movieId) {
@@ -124,6 +125,21 @@ if (movieId) {
 async function init() {
     await loadImageConfig();
     loadMovieDetails();
+    setupSearchListener();
+}
+
+// Watch page search functionality
+function setupSearchListener() {
+    if (!watchSearchInput) return;
+    
+    watchSearchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const query = watchSearchInput.value.trim();
+            if (query) {
+                window.location.href = `index.html?search=${encodeURIComponent(query)}`;
+            }
+        }
+    });
 }
 
 async function loadImageConfig() {
